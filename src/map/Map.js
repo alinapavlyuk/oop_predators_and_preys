@@ -15,7 +15,7 @@ export class Map {
     }
 
     isCellValid(xPos, yPos) {
-        return this.#mapArr[yPos] !== undefined && this.#mapArr[yPos][xPos] !== undefined && Object.keys(this.#mapArr[yPos][xPos]).length === 0;
+        return this.#mapArr[yPos] !== undefined && this.#mapArr[yPos][xPos] !== undefined && this.#mapArr[yPos][xPos].name === undefined;
     }
 
     addAnimal(xPos, yPos, animal) {

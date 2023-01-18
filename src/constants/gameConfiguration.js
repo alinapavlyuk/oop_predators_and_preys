@@ -17,14 +17,14 @@ export const animalsToCreate = [
 
     {
         name: animalNames.rabbit,
-        type: animalTypes.predator,
+        type: animalTypes.prey,
         sex: animalSex.male,
         amount: 4
     },
 
     {
         name: animalNames.rabbit,
-        type: animalTypes.predator,
+        type: animalTypes.prey,
         sex: animalSex.female,
         amount: 4
     }
