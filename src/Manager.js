@@ -1,16 +1,35 @@
 import {Map} from "./map/Map.js"
-import {animalSex} from "./constants/animalTypes.js";
 import {animalFactory} from "./animals/animalFactory.js";
 import {animalsConfigurations} from "./constants/animals.js";
-import {animalsToCreate, gameSpeed, mapSize} from "./constants/gameConfiguration.js";
+import {animalsToCreate, gameSpeed, mapSize, rabbitPreyFemale, rabbitPreyMale} from "./constants/gameConfiguration.js";
 import {directions} from "./constants/moveDirections.js";
+import {animalConditionsAll, predatorConditions} from "./constants/animalConditions.js";
 import {mapDrawer} from "./map/MapDrawer.js";
-import {animalConditionsAll} from "./constants/animalConditions.js";
+import {animalTypes} from "./constants/animalTypes.js";
 
 class Manager {
     #map = new Map(mapSize);
     #listOfAnimals = [];
+    #listOfPreys = [];
     #animalCounterGlobal = 0;
+    #bornInterval;
+
+    start() {
+        this.createInitialAnimals();
+        mapDrawer.drawMapFromArray(this.mapArr);
+        let timer = setInterval(() => {
+            this.checkForDeadAnimals();
+            this.moveAnimals();
+            mapDrawer.redrawMapFromNewArray(this.mapArr);
+            if(this.currentAnimalAmount === 0) {
+                clearInterval(this.#bornInterval);
+                clearInterval(timer);
+                console.log(this.#animalCounterGlobal);
+                console.log("The End.")
+            }
+        }, gameSpeed)
+        this.initializeBornInterval();
+    }
 
     rand(min, max) {
         min = Math.ceil(min);
@@ -28,21 +47,6 @@ class Manager {
 
     get mapArr() {
         return this.#map.mapArr;
-    }
-
-    start() {
-        this.createAnimals();
-        mapDrawer.drawMapFromArray(this.mapArr);
-        let timer = setInterval(() => {
-            this.checkForDeadAnimals();
-            this.moveAnimals();
-            mapDrawer.redrawMapFromNewArray(this.mapArr);
-            if(this.currentAnimalAmount === 0) {
-                clearInterval(timer);
-                console.log(this.#animalCounterGlobal);
-                console.log("The End.")
-            }
-        }, gameSpeed)
     }
 
     isMapCellValid(xPos, yPos) {
@@ -63,6 +67,80 @@ class Manager {
         animal.setPosition(newPosition.x, newPosition.y);
     }
 
+    searchPrey(predator) {
+        let isSuccess = false;
+        let shortestDistancePrey = null;
+        this.#listOfPreys.forEach((prey) => {
+            const pX = predator.xPos - prey.xPos;
+            const pY = predator.yPos - prey.yPos;
+            const distance = Math.sqrt(pX*pX+pY*pY);
+            if(!shortestDistancePrey || shortestDistancePrey.distance > distance) {
+                shortestDistancePrey = {
+                    distance,
+                    prey
+                };
+            }
+        })
+
+        if(shortestDistancePrey) {
+            predator.hauntingTarget = shortestDistancePrey.prey;
+            isSuccess = true;
+        }
+        return isSuccess;
+    }
+
+    movePredator(predator) {
+        if(predator.hauntingTarget && !predator.hauntingTarget.isCondition(animalConditionsAll.dead)) {
+            this.movePredatorToPrey(predator);
+        } else {
+            const isPreyFound = this.searchPrey(predator);
+            if(isPreyFound) {
+                this.movePredatorToPrey(predator);
+            } else {
+                let direction = this.rand(0, 7);
+                this.moveAnimal(predator, direction);
+            }
+        }
+    }
+
+    movePredatorToPrey(predator) {
+        const newPosition = {
+            x: predator.xPos,
+            y: predator.yPos
+        }
+
+        const direction = [0, 0];
+
+        if(predator.xPos > predator.hauntingTarget.xPos) {
+            newPosition.x = predator.xPos - 1;
+            direction[0] = -1;
+        } else if (predator.xPos < predator.hauntingTarget.xPos){
+            newPosition.x = predator.xPos + 1;
+            direction[0] = 1;
+        }
+
+        if(predator.yPos > predator.hauntingTarget.yPos) {
+            newPosition.y = predator.yPos - 1;
+            direction[1] = -1;
+        } else if (predator.yPos < predator.hauntingTarget.yPos) {
+            newPosition.y = predator.xPos + 1;
+            direction[1] = 1;
+        }
+
+        const isCollidedWithTarget = (this.mapArr[newPosition.y] !== undefined && this.mapArr[newPosition.y][newPosition.x] !== undefined && this.mapArr[newPosition.y][newPosition.x] === predator.hauntingTarget);
+
+        if(isCollidedWithTarget) {
+            predator.eat(predator.hauntingTarget);
+            predator.hauntingTarget.changeCondition("dead");
+            this.doStep(predator, newPosition);
+            predator.hauntingTarget = null;
+        } else {
+            this.moveAnimal(predator, directions.findIndex(directionPreset => {
+                return directionPreset[0] === direction[0] && directionPreset[1] === direction[1]
+            }));
+        }
+    }
+
     moveAnimal(animal, direction) {
         let newPosition = {
             x: animal.xPos+directions[direction][0],
@@ -78,14 +156,16 @@ class Manager {
 
     moveAnimals() {
         this.#listOfAnimals.forEach(animal => {
-            if(animal.isCondition(animalConditionsAll.normal)) {
+            if(animal.type === animalTypes.prey && animal.isCondition(animalConditionsAll.normal)) {
                 let direction = this.rand(0, 7);
                 this.moveAnimal(animal, direction);
+            } else if (animal.type === animalTypes.predator) {
+                this.movePredator(animal);
             }
         })
     }
 
-   checkForDeadAnimals() {
+    checkForDeadAnimals() {
        this.#listOfAnimals = this.#listOfAnimals.filter(animal => {
            if(animal.isCondition(animalConditionsAll.dead)) {
                this.deleteAnimalFromMap(animal.xPos, animal.yPos);
@@ -93,29 +173,50 @@ class Manager {
            }
            return true;
        });
+       this.#listOfPreys = this.#listOfPreys.filter(prey => {
+           if(prey.isCondition(animalConditionsAll.dead)) {
+               this.deleteAnimalFromMap(prey.xPos, prey.yPos);
+               return false;
+           }
+           return true;
+       })
    }
 
-    randomSex() {
+    getRandomAnimal() {
         if(Math.random() < 0.5) {
-            return animalSex.male;
+            return rabbitPreyMale;
         } else {
-            return animalSex.female;
+            return rabbitPreyFemale;
         }
     }
     //create - condition born
     //animal - born - setTimeout - normal
 
-    createAnimals() {
+    createInitialAnimals() {
         animalsToCreate.forEach(animal => {
             for(let i = 0; i < animal.amount; i++) {
-                let createdAnimal = animalFactory(animal.type, animal.sex, animalsConfigurations[animal.name]);
-                this.setPositionForAnimal(createdAnimal);
-                this.#listOfAnimals.push(createdAnimal);
-                this.map.addAnimal(createdAnimal.xPos, createdAnimal.yPos, createdAnimal);
-                createdAnimal.live();
-                this.#animalCounterGlobal++;
+                this.bornNewAnimal(animal);
             }
         })
+    }
+
+    initializeBornInterval() {
+       this.#bornInterval = setInterval(()=>{
+           this.bornNewAnimal(this.getRandomAnimal());
+       }, 5000)
+    }
+
+    bornNewAnimal(animal) {
+        let createdAnimal = animalFactory(animal.type, animal.sex, animalsConfigurations[animal.name]);
+        this.setPositionForAnimal(createdAnimal);
+        this.#listOfAnimals.push(createdAnimal);
+        this.map.addAnimal(createdAnimal.xPos, createdAnimal.yPos, createdAnimal);
+        createdAnimal.live();
+        this.#animalCounterGlobal++;
+
+        if(animal.type === animalTypes.prey) {
+            this.#listOfPreys.push(createdAnimal);
+        }
     }
 
     setPositionForAnimal(animal) {

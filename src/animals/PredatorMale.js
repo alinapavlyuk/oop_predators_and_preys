@@ -5,19 +5,19 @@ import {gameSpeed} from "../constants/gameConfiguration.js";
 
 export class PredatorMale extends Animal {
     #damage;
+    #hauntingTarget;
     constructor(animalConfig) {
         super(animalConfig.name, animalTypes.predator, animalSex.male, animalConfig.speed, animalConfig.vision, animalConfig.diet, animalConfig.maxHealth, animalConfig.saturation, commonConditions);
         this.#damage = animalConfig.damage;
+        this.#hauntingTarget = null;
     }
 
-    haunt() {
-        let timer = setInterval(() => {
-            if(this.isCondition(animalConditionsAll.beingHaunted)) {
-
-            } else {
-                clearInterval(timer);
-            }
-        }, gameSpeed)
+    get hauntingTarget() {
+        return this.#hauntingTarget;
     }
 
+    set hauntingTarget(hauntingTarget) {
+        this.#hauntingTarget = hauntingTarget;
+    }
 }
+

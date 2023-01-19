@@ -44,6 +44,14 @@ export class Animal extends Food{
         return this.#name;
     }
 
+    get type() {
+        return this.#type;
+    }
+
+    get health() {
+        return this.#health;
+    }
+
     isCondition (condition) {
         return this.#condition === animalConditionsAll[condition];
     }
@@ -69,17 +77,20 @@ export class Animal extends Food{
     }
 
     getHungry() {
-        this.loseHealth(0.1 * this.#maxHealth);
+        this.loseHealth(0.05 * this.#maxHealth);
     }
 
     eat(food) {
-        if(food.saturation) {
+        if(food.saturation > 0) {
             this.#receiveHealth(food.saturation);
         }
     }
 
     #receiveHealth(amount) {
         this.#health += amount;
+        if(this.#health > this.#maxHealth) {
+            this.#health = this.#maxHealth;
+        }
     }
 
     loseHealth(amount) {
@@ -94,3 +105,4 @@ export class Animal extends Food{
         throw new Error(`${condition} is not allowed`);
     }
 }
+
