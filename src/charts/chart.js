@@ -1,4 +1,4 @@
-class Chart {
+export class Chart {
   pointStart;
   chart;
 
@@ -7,7 +7,7 @@ class Chart {
     this.initChart(initialPredatorsAmount, initialPreysAmount);
   }
 
-  initChart = (predatorsAmount, preysAmount) => {
+  initChart = (initialPredatorsAmount, initialPreysAmount) => {
     this.chart = Highcharts.chart('chart-container', {
       title: {
         text: 'Predators and preys Statistic',
@@ -46,16 +46,16 @@ class Chart {
       },
       series: [{
         name: 'Predators',
-        data: [predatorsAmount]
+        data: [initialPredatorsAmount]
       },
       {
         name: 'Preys',
-        data: [preysAmount]
+        data: [initialPreysAmount]
       }]
     });
   }
 
-  updateChart = (predatorsAmount, preysAmount) => {
+  update = (predatorsAmount, preysAmount) => {
     this.chart.series[0].addPoint(predatorsAmount);
     this.chart.series[1].addPoint(preysAmount);
 
@@ -64,5 +64,3 @@ class Chart {
     this.chart.xAxis[0].setExtremes(Math.max(this.pointStart-9, 0), this.pointStart < 10 ? 9 : this.pointStart);
   }
 }
-
-export const chart = new Chart();

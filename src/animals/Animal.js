@@ -56,6 +56,10 @@ export class Animal extends Food{
         return this.#condition === animalConditionsAll[condition];
     }
 
+    isDead() {
+        return this.#condition === animalConditionsAll.dead;
+    }
+
     setPosition(xPos, yPos) {
         this.#xPos = xPos;
         this.#yPos = yPos;
