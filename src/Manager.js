@@ -6,10 +6,12 @@ import {directions} from "./constants/moveDirections.js";
 import {animalConditionsAll, predatorConditions} from "./constants/animalConditions.js";
 import {mapDrawer} from "./map/MapDrawer.js";
 import {animalTypes} from "./constants/animalTypes.js";
+import { chart } from './charts/chart.js';
 
 class Manager {
     #map = new Map(mapSize);
     #listOfAnimals = [];
+    #listOfPredators = [];
     #listOfPreys = [];
     #animalCounterGlobal = 0;
     #bornInterval;
@@ -21,14 +23,28 @@ class Manager {
             this.checkForDeadAnimals();
             this.moveAnimals();
             mapDrawer.redrawMapFromNewArray(this.mapArr);
+            chart.updateChart(
+              this.#listOfPredators.length,
+              this.#listOfPreys.length,
+            );
             if(this.currentAnimalAmount === 0) {
                 clearInterval(this.#bornInterval);
                 clearInterval(timer);
                 console.log(this.#animalCounterGlobal);
                 console.log("The End.")
             }
-        }, gameSpeed)
+        }, gameSpeed);
         this.initializeBornInterval();
+        console.log('this.#listOfPredators', this.#listOfPredators);
+        console.log('this.#listOfPreys', this.#listOfPreys);
+        chart.initChart(
+          this.#listOfPredators.length,
+          this.#listOfPreys.length,
+        );
+/*
+        setInterval(() => {
+
+        }, 2000)*/
     }
 
     rand(min, max) {
@@ -173,6 +189,14 @@ class Manager {
            }
            return true;
        });
+        this.#listOfPredators = this.#listOfPredators.filter(animal => {
+            if(animal.isCondition(animalConditionsAll.dead)) {
+                this.deleteAnimalFromMap(animal.xPos, animal.yPos);
+                return false;
+            }
+            return true;
+        });
+
        this.#listOfPreys = this.#listOfPreys.filter(prey => {
            if(prey.isCondition(animalConditionsAll.dead)) {
                this.deleteAnimalFromMap(prey.xPos, prey.yPos);
@@ -213,6 +237,10 @@ class Manager {
         this.map.addAnimal(createdAnimal.xPos, createdAnimal.yPos, createdAnimal);
         createdAnimal.live();
         this.#animalCounterGlobal++;
+
+        if(animal.type === animalTypes.predator) {
+            this.#listOfPredators.push(createdAnimal);
+        }
 
         if(animal.type === animalTypes.prey) {
             this.#listOfPreys.push(createdAnimal);
