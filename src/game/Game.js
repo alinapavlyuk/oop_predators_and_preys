@@ -1,8 +1,8 @@
 import {GameMap} from "./map/GameMap.js"
 import {gameSpeed, rabbitPreyFemale, rabbitPreyMale} from "./constants/gameConfiguration.js";
 
-import {Chart} from './charts/chart.js';
-import { AnimalsManager } from './animals/AnimalsManager.js';
+import {Chart} from './charts/Сhart.js';
+import {AnimalsManager} from './animals/AnimalsManager.js';
 
 class Game {
     #gameMap;
@@ -20,7 +20,6 @@ class Game {
 
     start() {
         this.#animalManager.createInitialAnimals();
-        this.initializeBornInterval();
         this.initializeGameUpdateInterval();
     }
 
@@ -28,16 +27,10 @@ class Game {
         this.#gameInterval = setInterval(() => {
             this.update();
 
-            if(this.#animalManager.hasNoAnimals()) {
+            if (this.#animalManager.hasNoAnimals()) {
                 this.stopGame();
             }
         }, gameSpeed);
-    }
-
-    initializeBornInterval() {
-       this.#bornInterval = setInterval(()=>{
-           this.#animalManager.bornNewRandomAnimal();
-       }, 5000);
     }
 
     stopGame() {
@@ -49,6 +42,11 @@ class Game {
     update() {
         this.#animalManager.update();
         this.#gameMap.update();
+
+        this.#chart.update(
+            this.#animalManager.listOfPredatorsLength,
+            this.#animalManager.listOfPreysLength
+        );
     }
 }
 

@@ -27,7 +27,15 @@ p {
     background-image: url("../images/rabbit_icon.png");
 }
 
-.container {
+.menu-container {
+
+}
+
+.hidden {
+    display: none;
+}
+
+.game-container {
     display: flex;
 }
 

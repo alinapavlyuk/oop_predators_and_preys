@@ -2,7 +2,7 @@ import {Food} from "./Food.js";
 import {gameSpeed} from "../constants/gameConfiguration.js";
 import {animalConditionsAll} from "../constants/animalConditions.js";
 
-export class Animal extends Food{
+export class Animal extends Food {
     #name;
     #type;
     #sex;
@@ -16,7 +16,7 @@ export class Animal extends Food{
     #yPos;
     #conditions;
 
-    constructor (name, type, sex, speed, vision, diet, maxHealth, saturation, conditions) {
+    constructor(name, type, sex, speed, vision, diet, maxHealth, saturation, conditions) {
         super(saturation);
         this.#name = name;
         this.#type = type;
@@ -52,7 +52,11 @@ export class Animal extends Food{
         return this.#health;
     }
 
-    isCondition (condition) {
+    get sex() {
+        return this.#sex;
+    }
+
+    isCondition(condition) {
         return this.#condition === animalConditionsAll[condition];
     }
 
@@ -67,7 +71,7 @@ export class Animal extends Food{
 
     live() {
         setInterval(() => {
-            if(this.isCondition(animalConditionsAll.normal)) {
+            if (this.isCondition(animalConditionsAll.normal)) {
                 this.getHungry();
                 this.checkHealth();
             }
@@ -75,7 +79,7 @@ export class Animal extends Food{
     }
 
     checkHealth() {
-        if(this.#health <= 0) {
+        if (this.#health <= 0) {
             this.changeCondition(animalConditionsAll.dead);
         }
     }
@@ -85,14 +89,14 @@ export class Animal extends Food{
     }
 
     eat(food) {
-        if(food.saturation > 0) {
+        if (food.saturation > 0) {
             this.#receiveHealth(food.saturation);
         }
     }
 
     #receiveHealth(amount) {
         this.#health += amount;
-        if(this.#health > this.#maxHealth) {
+        if (this.#health > this.#maxHealth) {
             this.#health = this.#maxHealth;
         }
     }
@@ -102,11 +106,13 @@ export class Animal extends Food{
     }
 
     changeCondition(condition) {
-        if(this.#conditions.indexOf(condition) >= 0) {
+        if (this.#conditions.indexOf(condition) >= 0) {
             this.#condition = condition;
             return;
         }
         throw new Error(`${condition} is not allowed`);
     }
+
+    update() {}
 }
 

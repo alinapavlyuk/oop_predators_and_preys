@@ -3,11 +3,6 @@ export const animalNames = {
     rabbit: "rabbit"
 }
 
-export const pregnancyTime = {
-    [animalNames.fox] : 15,
-    [animalNames.rabbit] : 5
-}
-
 export const animalTypes = {
     predator: "predator",
     prey: "prey"

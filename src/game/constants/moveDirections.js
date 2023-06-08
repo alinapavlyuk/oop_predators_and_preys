@@ -6,5 +6,5 @@ export const directions = [
     [1, 0],  // right
     [1, 1],  // right-bottom,
     [0, 1],  // bottom
-    [-1,1],  // bottom-left
+    [-1, 1],  // bottom-left
 ]

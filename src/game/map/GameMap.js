@@ -1,5 +1,5 @@
-import { mapDrawer } from './MapDrawer.js';
-import { mapSize } from '../constants/gameConfiguration.js';
+import {mapDrawer} from './MapDrawer.js';
+import {mapSize} from '../constants/gameConfiguration.js';
 
 export class GameMap {
     #mapArr;
@@ -16,6 +16,7 @@ export class GameMap {
     get mapArr() {
         return this.#mapArr;
     }
+
     get size() {
         return this.#size;
     }
@@ -23,6 +24,7 @@ export class GameMap {
     initialiseMapView() {
         this.mapDrawer.drawMapFromArray(this.mapArr)
     }
+
     drawMap() {
         this.mapDrawer.redrawMapFromNewArray(this.mapArr)
     }
@@ -44,20 +46,7 @@ export class GameMap {
         this.addAnimal(newPosition.x, newPosition.y, animal);
     }
 
-    clearMapFromDeadAnimals() {
-        this.#mapArr = this.#mapArr.map((mapRow) => {
-            return mapRow.map((cell) => {
-                const animalInTheCell = !!cell && Object.keys(cell).length > 0;
-                if(animalInTheCell && animalInTheCell.isDead && animalInTheCell.isDead()) {
-                    return {};
-                }
-                return cell;
-            })
-        })
-    }
-
     update() {
-        this.clearMapFromDeadAnimals();
         this.drawMap();
     }
 }

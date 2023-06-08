@@ -34,8 +34,8 @@ class MapDrawer {
         let rowAmount = table.rows.length;
         let colAmount = table.rows[0].cells.length;
 
-        for(let i = 0; i < rowAmount; i++) {
-            for(let j = 0; j < colAmount; j++) {
+        for (let i = 0; i < rowAmount; i++) {
+            for (let j = 0; j < colAmount; j++) {
                 let cell = table.rows[i].cells[j];
                 const animal = newTableData[i][j];
                 cell.className = `cell type-${animal.name}`;
