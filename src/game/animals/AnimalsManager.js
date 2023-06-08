@@ -1,10 +1,9 @@
 import {animalFactory} from './animalFactory.js';
 import {animalsConfigurations} from '../constants/animals.js';
 import {animalSex, animalTypes} from '../constants/animalTypes.js';
-import {rand} from '../utils';
+import {rand} from '../utils/index.js';
 import {animalConditionsAll} from '../constants/animalConditions.js';
 import {directions} from '../constants/moveDirections.js';
-import {animalsToCreate, rabbitPreyFemale, rabbitPreyMale} from '../constants/gameConfiguration.js';
 
 export class AnimalsManager {
     #gameMap;
@@ -40,17 +39,18 @@ export class AnimalsManager {
         return this.#listOfPreys.length;
     }
 
-    createInitialAnimals() {
-        animalsToCreate.forEach(animal => {
+    createInitialAnimals(animals) {
+        animals.forEach(animal => {
             for (let i = 0; i < animal.amount; i++) {
-                this.bornNewAnimal(animal.type, animal.name, animal.sex);
+                // throw new Error("Something went badly wrong!");
+                this.bornNewAnimal(animal.type, animal.name, this.getRandomSex());
             }
         })
     }
 
     bornNewAnimal = (type, name, sex) => {
-        let createdAnimal = animalFactory(type, sex, animalsConfigurations[name]);
-        console.log(createdAnimal);
+        let createdAnimal = animalFactory(type, animalsConfigurations[name], sex);
+        console.log(this.#gameMap.size);
         this.setPositionForAnimal(createdAnimal);
         this.#listOfAnimals.push(createdAnimal);
         this.#gameMap.addAnimal(createdAnimal.xPos, createdAnimal.yPos, createdAnimal);
@@ -69,8 +69,8 @@ export class AnimalsManager {
     setPositionForAnimal(animal) {
         let xPos, yPos;
         do {
-            xPos = rand(0, this.#gameMap.size - 1);
-            yPos = rand(0, this.#gameMap.size - 1);
+            xPos = rand(0, this.#gameMap.size[1] - 1);
+            yPos = rand(0, this.#gameMap.size[0] - 1);
         } while (!this.#gameMap.isCellValid(xPos, yPos))
         animal.setPosition(xPos, yPos);
     }

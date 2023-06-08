@@ -1,13 +1,12 @@
 import {mapDrawer} from './MapDrawer.js';
-import {mapSize} from '../constants/gameConfiguration.js';
 
 export class GameMap {
     #mapArr;
     #size;
 
-    constructor() {
-        this.#mapArr = Array.from(Array(mapSize), _ => Array(mapSize).fill({}));
-        this.#size = mapSize;
+    constructor(size) {
+        this.#mapArr = Array.from(Array(size[0]), _ => Array(size[1]).fill({}));
+        this.#size = size;
         this.mapDrawer = mapDrawer;
 
         this.initialiseMapView();

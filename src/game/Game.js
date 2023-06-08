@@ -1,10 +1,10 @@
 import {GameMap} from "./map/GameMap.js"
-import {gameSpeed, rabbitPreyFemale, rabbitPreyMale} from "./constants/gameConfiguration.js";
+import {gameSpeed} from "./constants/gameConfiguration.js";
 
 import {Chart} from './charts/Сhart.js';
 import {AnimalsManager} from './animals/AnimalsManager.js';
 
-class Game {
+export class Game {
     #gameMap;
     #chart;
     #animalManager;
@@ -12,14 +12,14 @@ class Game {
     #bornInterval;
     #gameInterval;
 
-    constructor() {
-        this.#gameMap = new GameMap();
+    constructor(mapSize) {
+        this.#gameMap = new GameMap(mapSize);
         this.#chart = new Chart();
         this.#animalManager = new AnimalsManager(this.#gameMap, this.#chart);
     }
 
-    start() {
-        this.#animalManager.createInitialAnimals();
+    start(animals) {
+        this.#animalManager.createInitialAnimals(animals);
         this.initializeGameUpdateInterval();
     }
 
@@ -50,4 +50,3 @@ class Game {
     }
 }
 
-export const game = new Game();

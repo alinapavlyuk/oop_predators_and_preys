@@ -4,7 +4,7 @@ import {PredatorFemale} from "./PredatorFemale.js";
 import {PreyMale} from "./PreyMale.js";
 import {PreyFemale} from "./PreyFemale.js";
 
-export const animalFactory = (type, sex, animalConfiguration) => {
+export const animalFactory = (type, animalConfiguration, sex) => {
     switch (true) {
         case type === animalTypes.predator && sex === animalSex.male : {
             return new PredatorMale(animalConfiguration);

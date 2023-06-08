@@ -31,24 +31,24 @@ export const rabbitPreyFemale = {
 export const animalsToCreate = [
     {
         ...foxPredatorMale,
-        amount: 0
+        amount: 2
     },
 
     {
         ...foxPredatorFemale,
-        amount: 4
+        amount: 2
     },
 
     {
         ...rabbitPreyMale,
-        amount: 0
+        amount: 3
     },
 
     {
         ...rabbitPreyFemale,
-        amount: 0
+        amount: 3
     }
 ]
 
 export const gameSpeed = 1000;
-export const mapSize = 15;
+export const mapSize = [15, 15];
