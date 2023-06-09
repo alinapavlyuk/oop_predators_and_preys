@@ -9,16 +9,19 @@ export class Game {
     #chart;
     #animalManager;
 
+    #maxAnimalAmount;
     #foodInterval;
     #gameInterval;
 
     constructor(mapSize) {
+        this.#maxAnimalAmount = Math.round(mapSize[0] * mapSize[1] / 8);
         this.#gameMap = new GameMap(mapSize);
         this.#chart = new Chart();
         this.#animalManager = new AnimalsManager(this.#gameMap, this.#chart);
     }
 
     start(animals) {
+        this.#animalManager.maxAnimalAmount = this.#maxAnimalAmount;
         this.#animalManager.createInitialAnimals(animals);
         this.initializeGameUpdateInterval();
         this.provideRandomFood();
@@ -41,6 +44,7 @@ export class Game {
     }
 
     stopGame() {
+        this.#gameMap.clearMap();
         clearInterval(this.#foodInterval);
         clearInterval(this.#gameInterval);
         console.log("The End.")

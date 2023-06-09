@@ -1,6 +1,8 @@
 export const animalNames = {
     fox: "fox",
-    rabbit: "rabbit"
+    rabbit: "rabbit",
+    wolf: "wolf",
+    rat: "rat"
 }
 
 export const animalTypes = {

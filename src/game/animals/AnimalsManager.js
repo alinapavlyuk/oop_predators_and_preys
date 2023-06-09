@@ -1,11 +1,11 @@
 import {animalFactory} from './animalFactory.js';
 import {animalsConfigurations} from '../constants/animals.js';
-import {animalSex, animalTypes} from '../constants/animalTypes.js';
+import {animalNames, animalSex, animalTypes} from '../constants/animalTypes.js';
 import {rand} from '../utils/index.js';
 import {conditionsAll} from '../constants/animalConditions.js';
 import {directions} from '../constants/moveDirections.js';
 import {foodsFactory} from "./foodsFactory.js";
-import {foods, maxFoodAmountOnMap} from "../constants/foods.js";
+import {foods as foodsNames, foods, maxFoodAmountOnMap} from "../constants/foods.js";
 
 export class AnimalsManager {
     #gameMap;
@@ -16,6 +16,7 @@ export class AnimalsManager {
     #listOfPreys;
     #listOfFoods;
 
+    #maxAnimalAmount;
     #animalCounterGlobal;
 
     constructor(map, chart) {
@@ -43,6 +44,10 @@ export class AnimalsManager {
         return this.#listOfPreys.length;
     }
 
+    set maxAnimalAmount(maxAnimalAmount) {
+        this.#maxAnimalAmount = maxAnimalAmount;
+    }
+
     createInitialAnimals(animals) {
         animals.forEach(animal => {
             for (let i = 0; i < animal.amount; i++) {
@@ -52,19 +57,21 @@ export class AnimalsManager {
     }
 
     bornNewAnimal = (type, name, sex) => {
-        let createdAnimal = animalFactory(type, animalsConfigurations[name], sex);
-        this.setPositionForObject(createdAnimal);
-        this.#listOfAnimals.push(createdAnimal);
-        this.#gameMap.addObject(createdAnimal.xPos, createdAnimal.yPos, createdAnimal);
-        createdAnimal.live();
-        this.#animalCounterGlobal++;
+        if (this.#listOfAnimals.length < this.#maxAnimalAmount) {
+            let createdAnimal = animalFactory(type, animalsConfigurations[name], sex);
+            this.setPositionForObject(createdAnimal);
+            this.#listOfAnimals.push(createdAnimal);
+            this.#gameMap.addObject(createdAnimal.xPos, createdAnimal.yPos, createdAnimal);
+            createdAnimal.live();
+            this.#animalCounterGlobal++;
 
-        if (type === animalTypes.predator) {
-            this.#listOfPredators.push(createdAnimal);
-        }
+            if (type === animalTypes.predator) {
+                this.#listOfPredators.push(createdAnimal);
+            }
 
-        if (type === animalTypes.prey) {
-            this.#listOfPreys.push(createdAnimal);
+            if (type === animalTypes.prey) {
+                this.#listOfPreys.push(createdAnimal);
+            }
         }
     }
 
@@ -93,6 +100,7 @@ export class AnimalsManager {
 
     moveAnimals() {
         this.#listOfAnimals.forEach(animal => {
+            console.log(animal);
             if (animal.isCondition(conditionsAll.normal)) {
                 let direction = rand(0, 7);
                 this.moveAnimal(animal, direction);
@@ -110,8 +118,7 @@ export class AnimalsManager {
             if (isHauntingTargetFound) {
                 this.moveAnimalToHauntingTarget(animal);
             } else {
-                let direction = rand(0, 7);
-                this.moveAnimal(animal, direction);
+                animal.changeCondition(conditionsAll.normal);
             }
         }
     }
@@ -125,23 +132,24 @@ export class AnimalsManager {
         let isSuccess = false;
         let shortestDistancePrey = null;
         const diets = {
-            rabbit: this.#listOfPreys,
-            carrot: this.#listOfFoods
+            rabbit: this.#listOfPreys.filter((animal) => animal.name === animalNames.rabbit),
+            carrot: this.#listOfFoods.filter((food) => food.name === foodsNames.carrot),
+            rat: this.#listOfPreys.filter((animal) => animal.name === animalNames.rat),
         }
-        diets[animal.diet].forEach((prey) => {
-            const pX = animal.xPos - prey.xPos;
-            const pY = animal.yPos - prey.yPos;
+        diets[animal.diet].forEach((hauntingTarget) => {
+            const pX = animal.xPos - hauntingTarget.xPos;
+            const pY = animal.yPos - hauntingTarget.yPos;
             const distance = Math.sqrt(pX * pX + pY * pY);
             if (!shortestDistancePrey || shortestDistancePrey.distance > distance) {
                 shortestDistancePrey = {
                     distance,
-                    prey
+                    target: hauntingTarget
                 };
             }
         })
 
         if (shortestDistancePrey) {
-            animal.hauntingTarget = shortestDistancePrey.prey;
+            animal.hauntingTarget = shortestDistancePrey.target;
             isSuccess = true;
         }
         return isSuccess;
@@ -229,11 +237,13 @@ export class AnimalsManager {
     }
 
     updateAnimals() {
-        this.#listOfAnimals.forEach((animal) => {
-            if (animal.update) {
-                animal.update();
-            }
-        })
+        if(this.#listOfPredators.length !== 0 && this.#listOfPreys.length !== 0) {
+            this.#listOfAnimals.forEach((animal) => {
+                if (animal.update) {
+                    animal.update();
+                }
+            })
+        }
     }
 
     checkPregnancy() {

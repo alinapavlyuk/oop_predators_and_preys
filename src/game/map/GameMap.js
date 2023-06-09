@@ -32,6 +32,11 @@ export class GameMap {
         return this.#mapArr[yPos] !== undefined && this.#mapArr[yPos][xPos] !== undefined && this.#mapArr[yPos][xPos].name === undefined;
     }
 
+    clearMap() {
+        this.#mapArr.forEach((row) => {row.fill({})});
+        this.mapDrawer.redrawMapFromNewArray(this.mapArr);
+    }
+
     addObject(xPos, yPos, object) {
         this.#mapArr[yPos][xPos] = object;
     }

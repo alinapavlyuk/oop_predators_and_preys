@@ -31,6 +31,14 @@ p {
     background-image: url("../images/rabbit_icon.png");
 }
 
+.type-wolf {
+    background-image: url("../images/wolf_icon.png");
+}
+
+.type-rat {
+    background-image: url("../images/rat_icon.png");
+}
+
 .type-carrot {
     background-image: url("../images/carrot_icon.png");
 }

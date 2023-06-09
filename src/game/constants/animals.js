@@ -19,6 +19,24 @@ export const animalsConfigurations = {
         vision: 4,
         diet: preyFoods.rabbitFoods,
         pregnancyTime: 7
+    },
+
+    [animalNames.wolf]: {
+        name: animalNames.wolf,
+        speed: 2,
+        maxHealth: 50,
+        vision: 4,
+        diet: predatorFoods.wolfFoods,
+        pregnancyTime: 7
+    },
+
+    [animalNames.rat]: {
+        name: animalNames.rat,
+        speed: 2,
+        maxHealth: 50,
+        vision: 4,
+        diet: preyFoods.ratFoods,
+        pregnancyTime: 7
     }
 }
 

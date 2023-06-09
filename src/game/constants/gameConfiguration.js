@@ -14,6 +14,20 @@ export const foxPredatorFemale = {
     amount: 1
 }
 
+export const wolfPredatorMale = {
+    name: animalNames.wolf,
+    type: animalTypes.predator,
+    sex: animalSex.male,
+    amount: 1
+}
+
+export const wolfPredatorFemale = {
+    name: animalNames.wolf,
+    type: animalTypes.predator,
+    sex: animalSex.female,
+    amount: 1
+}
+
 export const rabbitPreyMale = {
     name: animalNames.rabbit,
     type: animalTypes.prey,
@@ -28,25 +42,59 @@ export const rabbitPreyFemale = {
     amount: 1
 }
 
+export const ratPreyMale = {
+    name: animalNames.rat,
+    type: animalTypes.prey,
+    sex: animalSex.male,
+    amount: 1
+}
+
+export const ratPreyFemale = {
+    name: animalNames.rat,
+    type: animalTypes.prey,
+    sex: animalSex.female,
+    amount: 1
+}
+
 export const animalsToCreate = [
     {
         ...foxPredatorMale,
-        amount: 2
+        amount: 1
     },
 
     {
         ...foxPredatorFemale,
-        amount: 2
+        amount: 1
+    },
+
+    {
+        ...wolfPredatorMale,
+        amount: 1
+    },
+
+    {
+        ...wolfPredatorFemale,
+        amount: 1
     },
 
     {
         ...rabbitPreyMale,
-        amount: 3
+        amount: 1
     },
 
     {
         ...rabbitPreyFemale,
-        amount: 3
+        amount: 1
+    },
+
+    {
+        ...ratPreyMale,
+        amount: 1
+    },
+
+    {
+        ...ratPreyFemale,
+        amount: 1
     }
 ]
 

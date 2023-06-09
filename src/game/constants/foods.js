@@ -1,9 +1,11 @@
 export const predatorFoods = {
-    foxFoods: "rabbit"
+    foxFoods: "rabbit",
+    wolfFoods: "rat"
 }
 
 export const preyFoods = {
-    rabbitFoods: "carrot"
+    rabbitFoods: "carrot",
+    ratFoods: "carrot"
 }
 
 export const foods = {

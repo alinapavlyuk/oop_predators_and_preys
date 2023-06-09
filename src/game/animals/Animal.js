@@ -51,19 +51,19 @@ export class Animal extends Food {
 
     eat(food) {
         if (food.saturation > 0) {
-            this.#receiveHealth(food.saturation);
+            this.receiveHealth(food.saturation);
         }
     }
 
-    #receiveHealth(amount) {
-        this.health += amount;
+    receiveHealth(amount) {
+        this.health = this.health + amount;
         if (this.health > this.#maxHealth) {
             this.health = this.#maxHealth;
         }
     }
 
     loseHealth(amount) {
-        this.health -= amount;
+        this.health = this.health - amount;
     }
 
     update() {
