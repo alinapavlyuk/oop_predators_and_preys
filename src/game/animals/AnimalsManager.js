@@ -2,8 +2,10 @@ import {animalFactory} from './animalFactory.js';
 import {animalsConfigurations} from '../constants/animals.js';
 import {animalSex, animalTypes} from '../constants/animalTypes.js';
 import {rand} from '../utils/index.js';
-import {animalConditionsAll} from '../constants/animalConditions.js';
+import {conditionsAll} from '../constants/animalConditions.js';
 import {directions} from '../constants/moveDirections.js';
+import {foodsFactory} from "./foodsFactory.js";
+import {foods, maxFoodAmountOnMap} from "../constants/foods.js";
 
 export class AnimalsManager {
     #gameMap;
@@ -12,6 +14,7 @@ export class AnimalsManager {
     #listOfAnimals;
     #listOfPredators;
     #listOfPreys;
+    #listOfFoods;
 
     #animalCounterGlobal;
 
@@ -22,6 +25,7 @@ export class AnimalsManager {
         this.#listOfAnimals = []
         this.#listOfPredators = [];
         this.#listOfPreys = [];
+        this.#listOfFoods = [];
 
         this.#animalCounterGlobal = 0;
 
@@ -42,7 +46,6 @@ export class AnimalsManager {
     createInitialAnimals(animals) {
         animals.forEach(animal => {
             for (let i = 0; i < animal.amount; i++) {
-                // throw new Error("Something went badly wrong!");
                 this.bornNewAnimal(animal.type, animal.name, this.getRandomSex());
             }
         })
@@ -50,10 +53,9 @@ export class AnimalsManager {
 
     bornNewAnimal = (type, name, sex) => {
         let createdAnimal = animalFactory(type, animalsConfigurations[name], sex);
-        console.log(this.#gameMap.size);
-        this.setPositionForAnimal(createdAnimal);
+        this.setPositionForObject(createdAnimal);
         this.#listOfAnimals.push(createdAnimal);
-        this.#gameMap.addAnimal(createdAnimal.xPos, createdAnimal.yPos, createdAnimal);
+        this.#gameMap.addObject(createdAnimal.xPos, createdAnimal.yPos, createdAnimal);
         createdAnimal.live();
         this.#animalCounterGlobal++;
 
@@ -66,13 +68,23 @@ export class AnimalsManager {
         }
     }
 
-    setPositionForAnimal(animal) {
+    givePreysFood() {
+        if (this.#listOfFoods.length < maxFoodAmountOnMap) {
+            let keys = Object.keys(foods);
+            let food = foodsFactory(foods[keys[keys.length * Math.random() << 0]]);
+            this.setPositionForObject(food);
+            this.#listOfFoods.push(food);
+            this.#gameMap.addObject(food.xPos, food.yPos, food);
+        }
+    }
+
+    setPositionForObject(object) {
         let xPos, yPos;
         do {
             xPos = rand(0, this.#gameMap.size[1] - 1);
             yPos = rand(0, this.#gameMap.size[0] - 1);
         } while (!this.#gameMap.isCellValid(xPos, yPos))
-        animal.setPosition(xPos, yPos);
+        object.setPosition(xPos, yPos);
     }
 
     hasNoAnimals() {
@@ -81,25 +93,25 @@ export class AnimalsManager {
 
     moveAnimals() {
         this.#listOfAnimals.forEach(animal => {
-            if (animal.type === animalTypes.prey && animal.isCondition(animalConditionsAll.normal)) {
+            if (animal.isCondition(conditionsAll.normal)) {
                 let direction = rand(0, 7);
                 this.moveAnimal(animal, direction);
-            } else if (animal.type === animalTypes.predator) {
-                this.movePredator(animal);
+            } else if (animal.isCondition(conditionsAll.haunting)) {
+                this.haunt(animal);
             }
         })
     }
 
-    movePredator(predator) {
-        if (predator.hauntingTarget && !predator.hauntingTarget.isDead()) {
-            this.movePredatorToPrey(predator);
+    haunt(animal) {
+        if (animal.hauntingTarget && !animal.hauntingTarget.isDead()) {
+            this.moveAnimalToHauntingTarget(animal);
         } else {
-            const isPreyFound = this.searchPrey(predator);
-            if (isPreyFound) {
-                this.movePredatorToPrey(predator);
+            const isHauntingTargetFound = this.searchHauntingTarget(animal);
+            if (isHauntingTargetFound) {
+                this.moveAnimalToHauntingTarget(animal);
             } else {
                 let direction = rand(0, 7);
-                this.moveAnimal(predator, direction);
+                this.moveAnimal(animal, direction);
             }
         }
     }
@@ -109,12 +121,16 @@ export class AnimalsManager {
         animal.setPosition(newPosition.x, newPosition.y);
     }
 
-    searchPrey(predator) {
+    searchHauntingTarget(animal) {
         let isSuccess = false;
         let shortestDistancePrey = null;
-        this.#listOfPreys.forEach((prey) => {
-            const pX = predator.xPos - prey.xPos;
-            const pY = predator.yPos - prey.yPos;
+        const diets = {
+            rabbit: this.#listOfPreys,
+            carrot: this.#listOfFoods
+        }
+        diets[animal.diet].forEach((prey) => {
+            const pX = animal.xPos - prey.xPos;
+            const pY = animal.yPos - prey.yPos;
             const distance = Math.sqrt(pX * pX + pY * pY);
             if (!shortestDistancePrey || shortestDistancePrey.distance > distance) {
                 shortestDistancePrey = {
@@ -125,13 +141,13 @@ export class AnimalsManager {
         })
 
         if (shortestDistancePrey) {
-            predator.hauntingTarget = shortestDistancePrey.prey;
+            animal.hauntingTarget = shortestDistancePrey.prey;
             isSuccess = true;
         }
         return isSuccess;
     }
 
-    movePredatorToPrey(predator) {
+    moveAnimalToHauntingTarget(predator) {
         const newPosition = {
             x: predator.xPos,
             y: predator.yPos
@@ -185,28 +201,19 @@ export class AnimalsManager {
         }
     }
 
+    filterDeadObjects = (gameObjects) => {
+        if (gameObjects.isCondition(conditionsAll.dead)) {
+            this.#gameMap.deleteObject(gameObjects.xPos, gameObjects.yPos);
+            return false;
+        }
+        return true;
+    }
+
     checkForDeadAnimals() {
-        this.#listOfAnimals = this.#listOfAnimals.filter(animal => {
-            if (animal.isCondition(animalConditionsAll.dead)) {
-                this.#gameMap.deleteAnimal(animal.xPos, animal.yPos);
-                return false;
-            }
-            return true;
-        });
-        this.#listOfPredators = this.#listOfPredators.filter(animal => {
-            if (animal.isCondition(animalConditionsAll.dead)) {
-                this.#gameMap.deleteAnimal(animal.xPos, animal.yPos);
-                return false;
-            }
-            return true;
-        });
-        this.#listOfPreys = this.#listOfPreys.filter(prey => {
-            if (prey.isCondition(animalConditionsAll.dead)) {
-                this.#gameMap.deleteAnimal(prey.xPos, prey.yPos);
-                return false;
-            }
-            return true;
-        })
+        this.#listOfAnimals = this.#listOfAnimals.filter(this.filterDeadObjects);
+        this.#listOfPredators = this.#listOfPredators.filter(this.filterDeadObjects);
+        this.#listOfPreys = this.#listOfPreys.filter(this.filterDeadObjects);
+        this.#listOfFoods = this.#listOfFoods.filter(this.filterDeadObjects);
     }
 
     getRandomSex() {

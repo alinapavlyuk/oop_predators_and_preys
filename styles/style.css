@@ -31,6 +31,10 @@ p {
     background-image: url("../images/rabbit_icon.png");
 }
 
+.type-carrot {
+    background-image: url("../images/carrot_icon.png");
+}
+
 body {
     background-color: #F9E0BB;
 }

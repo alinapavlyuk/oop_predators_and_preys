@@ -1,9 +1,9 @@
-export const commonConditions = ["normal", "newborn", "dead"];
-export const predatorConditions = ["eating", "haunting"];
-export const preyConditions = ["being eaten", "being haunted"];
-export const womanConditions = ["reproducing"];
+export const commonConditions = ["normal", "newborn", "dead", "haunting"];
+// export const predatorConditions = ["eating", "haunting"];
+// export const preyConditions = ["being eaten", "being haunted"];
+// export const womanConditions = ["reproducing"];
 
-export const animalConditionsAll = {
+export const conditionsAll = {
     normal: "normal",
     newborn: "newborn",
     dead: "dead",

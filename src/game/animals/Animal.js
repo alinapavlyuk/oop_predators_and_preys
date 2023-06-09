@@ -1,87 +1,48 @@
 import {Food} from "./Food.js";
 import {gameSpeed} from "../constants/gameConfiguration.js";
-import {animalConditionsAll} from "../constants/animalConditions.js";
+import {conditionsAll} from "../constants/animalConditions.js";
 
 export class Animal extends Food {
-    #name;
     #type;
     #sex;
     #speed;
-    #health;
     #vision;
-    #condition;
     #diet;
     #maxHealth;
-    #xPos;
-    #yPos;
-    #conditions;
 
     constructor(name, type, sex, speed, vision, diet, maxHealth, saturation, conditions) {
-        super(saturation);
-        this.#name = name;
+        super(saturation, name, -1, -1, conditions, maxHealth);
         this.#type = type;
         this.#sex = sex;
         this.#speed = speed;
-        this.#health = maxHealth;
         this.#vision = vision;
-        this.#condition = animalConditionsAll.normal;
         this.#diet = diet;
         this.#maxHealth = maxHealth;
-        this.#conditions = conditions;
-        this.#xPos = -1;
-        this.#yPos = -1;
-    }
-
-    get xPos() {
-        return this.#xPos;
-    }
-
-    get yPos() {
-        return this.#yPos;
-    }
-
-    get name() {
-        return this.#name;
     }
 
     get type() {
         return this.#type;
     }
 
-    get health() {
-        return this.#health;
+    get diet() {
+        return this.#diet;
+    }
+
+    get maxHealth() {
+        return this.#maxHealth;
     }
 
     get sex() {
         return this.#sex;
     }
 
-    isCondition(condition) {
-        return this.#condition === animalConditionsAll[condition];
-    }
-
-    isDead() {
-        return this.#condition === animalConditionsAll.dead;
-    }
-
-    setPosition(xPos, yPos) {
-        this.#xPos = xPos;
-        this.#yPos = yPos;
-    }
-
     live() {
         setInterval(() => {
-            if (this.isCondition(animalConditionsAll.normal)) {
+            if (this.isCondition(conditionsAll.normal)) {
                 this.getHungry();
                 this.checkHealth();
             }
         }, gameSpeed)
-    }
-
-    checkHealth() {
-        if (this.#health <= 0) {
-            this.changeCondition(animalConditionsAll.dead);
-        }
     }
 
     getHungry() {
@@ -95,24 +56,20 @@ export class Animal extends Food {
     }
 
     #receiveHealth(amount) {
-        this.#health += amount;
-        if (this.#health > this.#maxHealth) {
-            this.#health = this.#maxHealth;
+        this.health += amount;
+        if (this.health > this.#maxHealth) {
+            this.health = this.#maxHealth;
         }
     }
 
     loseHealth(amount) {
-        this.#health -= amount;
+        this.health -= amount;
     }
 
-    changeCondition(condition) {
-        if (this.#conditions.indexOf(condition) >= 0) {
-            this.#condition = condition;
-            return;
+    update() {
+        if (this.health < 0.7 * this.maxHealth && !this.isCondition(conditionsAll.dead) && !this.isCondition(conditionsAll.haunting)) {
+            this.changeCondition(conditionsAll.haunting);
         }
-        throw new Error(`${condition} is not allowed`);
     }
-
-    update() {}
 }
 

@@ -9,7 +9,6 @@ export const animalsConfigurations = {
         vision: 6,
         damage: 10,
         diet: predatorFoods.foxFoods,
-        saturation: 0,
         pregnancyTime: 7
     },
 
@@ -19,8 +18,7 @@ export const animalsConfigurations = {
         maxHealth: 50,
         vision: 4,
         diet: preyFoods.rabbitFoods,
-        saturation: 30,
-        pregnancyTime: 5
+        pregnancyTime: 7
     }
 }
 

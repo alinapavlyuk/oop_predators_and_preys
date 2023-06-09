@@ -1,5 +1,5 @@
 import {GameMap} from "./map/GameMap.js"
-import {gameSpeed} from "./constants/gameConfiguration.js";
+import {foodReleaseSpeed, gameSpeed} from "./constants/gameConfiguration.js";
 
 import {Chart} from './charts/Сhart.js';
 import {AnimalsManager} from './animals/AnimalsManager.js';
@@ -9,7 +9,7 @@ export class Game {
     #chart;
     #animalManager;
 
-    #bornInterval;
+    #foodInterval;
     #gameInterval;
 
     constructor(mapSize) {
@@ -21,6 +21,7 @@ export class Game {
     start(animals) {
         this.#animalManager.createInitialAnimals(animals);
         this.initializeGameUpdateInterval();
+        this.provideRandomFood();
     }
 
     initializeGameUpdateInterval() {
@@ -33,8 +34,14 @@ export class Game {
         }, gameSpeed);
     }
 
+    provideRandomFood() {
+        this.#foodInterval = setInterval(() => {
+            this.#animalManager.givePreysFood();
+        }, foodReleaseSpeed)
+    }
+
     stopGame() {
-        clearInterval(this.#bornInterval);
+        clearInterval(this.#foodInterval);
         clearInterval(this.#gameInterval);
         console.log("The End.")
     }

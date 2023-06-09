@@ -32,17 +32,17 @@ export class GameMap {
         return this.#mapArr[yPos] !== undefined && this.#mapArr[yPos][xPos] !== undefined && this.#mapArr[yPos][xPos].name === undefined;
     }
 
-    addAnimal(xPos, yPos, animal) {
-        this.#mapArr[yPos][xPos] = animal;
+    addObject(xPos, yPos, object) {
+        this.#mapArr[yPos][xPos] = object;
     }
 
-    deleteAnimal(xPos, yPos) {
+    deleteObject(xPos, yPos) {
         this.#mapArr[yPos][xPos] = {};
     }
 
     moveAnimal(animal, newPosition) {
-        this.deleteAnimal(animal.xPos, animal.yPos);
-        this.addAnimal(newPosition.x, newPosition.y, animal);
+        this.deleteObject(animal.xPos, animal.yPos);
+        this.addObject(newPosition.x, newPosition.y, animal);
     }
 
     update() {

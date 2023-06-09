@@ -51,4 +51,5 @@ export const animalsToCreate = [
 ]
 
 export const gameSpeed = 1000;
+export const foodReleaseSpeed = 2000;
 export const mapSize = [15, 15];
