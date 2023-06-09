@@ -16,12 +16,12 @@ function getAnimalAmountFromDefaultConfig(name) {
 }
 
 function getConfigurations(flag) {
-    const mapX = -1, mapY = -1, foxAmount = -1, rabbitAmount = -1;
+    let mapX = -1, mapY = -1, foxAmount = -1, rabbitAmount = -1;
     if(!flag) {
-        const mapX = parseInt(document.querySelector("#map_x").value);
-        const mapY = parseInt(document.querySelector("#map_y").value);
-        const foxAmount = parseInt(document.querySelector("#fox_amount").value);
-        const rabbitAmount = parseInt(document.querySelector("#rabbit_amount").value);
+        mapX = parseInt(document.querySelector("#map_x").value);
+        mapY = parseInt(document.querySelector("#map_y").value);
+        foxAmount = parseInt(document.querySelector("#fox_amount").value);
+        rabbitAmount = parseInt(document.querySelector("#rabbit_amount").value);
     }
 
     return {
@@ -46,7 +46,7 @@ const defaultButton = document.querySelector("#default-button");
 startButton.addEventListener('click', function() {
     document.querySelector(".game-container").classList.remove("hidden");
     document.querySelector(".menu-container").classList.add("hidden");
-    let configurations = getConfigurations();
+    let configurations = getConfigurations(false);
     startGame(configurations);
 });
 defaultButton.addEventListener('click', function () {
