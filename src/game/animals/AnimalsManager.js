@@ -116,8 +116,10 @@ export class AnimalsManager {
         } else {
             const isHauntingTargetFound = this.searchHauntingTarget(animal);
             if (isHauntingTargetFound) {
+                animal.hasTarget = true;
                 this.moveAnimalToHauntingTarget(animal);
             } else {
+                animal.hasTarget = false;
                 animal.changeCondition(conditionsAll.normal);
             }
         }

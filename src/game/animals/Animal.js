@@ -9,6 +9,7 @@ export class Animal extends Food {
     #vision;
     #diet;
     #maxHealth;
+    #hasTarget;
 
     constructor(name, type, sex, speed, vision, diet, maxHealth, saturation, conditions) {
         super(saturation, name, -1, -1, conditions, maxHealth);
@@ -18,6 +19,7 @@ export class Animal extends Food {
         this.#vision = vision;
         this.#diet = diet;
         this.#maxHealth = maxHealth;
+        this.#hasTarget = true;
     }
 
     get type() {
@@ -34,6 +36,10 @@ export class Animal extends Food {
 
     get sex() {
         return this.#sex;
+    }
+
+    set hasTarget(bool) {
+        this.#hasTarget = bool;
     }
 
     live() {
@@ -67,7 +73,7 @@ export class Animal extends Food {
     }
 
     update() {
-        if (this.health < 0.7 * this.maxHealth && !this.isCondition(conditionsAll.dead) && !this.isCondition(conditionsAll.haunting)) {
+        if (this.health < 0.7 * this.maxHealth && this.#hasTarget &&!this.isCondition(conditionsAll.dead) && !this.isCondition(conditionsAll.haunting)) {
             this.changeCondition(conditionsAll.haunting);
         }
     }

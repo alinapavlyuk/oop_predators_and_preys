@@ -79,7 +79,7 @@ export const animalsToCreate = [
 
     {
         ...rabbitPreyMale,
-        amount: 1
+        amount: 3
     },
 
     {
@@ -89,7 +89,7 @@ export const animalsToCreate = [
 
     {
         ...ratPreyMale,
-        amount: 1
+        amount: 3
     },
 
     {
@@ -99,5 +99,5 @@ export const animalsToCreate = [
 ]
 
 export const gameSpeed = 1000;
-export const foodReleaseSpeed = 2000;
-export const mapSize = [15, 15];
+export const foodReleaseSpeed = 3000;
+export const mapSize = [20, 20];

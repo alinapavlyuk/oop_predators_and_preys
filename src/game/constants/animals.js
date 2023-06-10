@@ -9,7 +9,7 @@ export const animalsConfigurations = {
         vision: 6,
         damage: 10,
         diet: predatorFoods.foxFoods,
-        pregnancyTime: 7
+        pregnancyTime: 10
     },
 
     [animalNames.rabbit]: {
@@ -24,10 +24,10 @@ export const animalsConfigurations = {
     [animalNames.wolf]: {
         name: animalNames.wolf,
         speed: 2,
-        maxHealth: 50,
+        maxHealth: 100,
         vision: 4,
         diet: predatorFoods.wolfFoods,
-        pregnancyTime: 7
+        pregnancyTime: 10
     },
 
     [animalNames.rat]: {
@@ -36,7 +36,7 @@ export const animalsConfigurations = {
         maxHealth: 50,
         vision: 4,
         diet: preyFoods.ratFoods,
-        pregnancyTime: 7
+        pregnancyTime: 0
     }
 }
 
