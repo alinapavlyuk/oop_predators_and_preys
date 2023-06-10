@@ -23,6 +23,10 @@ export class Game {
     start(animals) {
         this.#animalManager.maxAnimalAmount = this.#maxAnimalAmount;
         this.#animalManager.createInitialAnimals(animals);
+        this.#chart.initChart(
+            this.#animalManager.listOfPredatorsLength,
+            this.#animalManager.listOfPreysLength
+        );
         this.initializeGameUpdateInterval();
         this.provideRandomFood();
     }

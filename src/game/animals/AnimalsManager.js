@@ -9,7 +9,6 @@ import {foods as foodsNames, foods, maxFoodAmountOnMap} from "../constants/foods
 
 export class AnimalsManager {
     #gameMap;
-    #chart;
 
     #listOfAnimals;
     #listOfPredators;
@@ -19,9 +18,8 @@ export class AnimalsManager {
     #maxAnimalAmount;
     #animalCounterGlobal;
 
-    constructor(map, chart) {
+    constructor(map) {
         this.#gameMap = map;
-        this.#chart = chart;
 
         this.#listOfAnimals = []
         this.#listOfPredators = [];
@@ -29,11 +27,6 @@ export class AnimalsManager {
         this.#listOfFoods = [];
 
         this.#animalCounterGlobal = 0;
-
-        this.#chart.initChart(
-            this.#listOfPredators.length,
-            this.#listOfPreys.length,
-        );
     }
 
     get listOfPredatorsLength() {
